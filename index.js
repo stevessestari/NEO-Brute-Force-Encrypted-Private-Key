@@ -2,13 +2,12 @@
 const { Worker } = require('worker_threads')
 const { default: Neon, api, wallet, tx, rpc } = require("@cityofzion/neon-js");
 
-
-//const passwordChars = ["a", "b", "c", "d", "e", "f", "g", "h"];
-const passwordChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!@".split('');
+//Insert your words list here
+const passwordChars = ["12345678", "b34", "87654321a", "d4343", "e434", "f434", "g434", "h434"];
 const workerThreads = [];
 
 const encryptedPrivateKey = process.argv[2];
-const currentPassword = [passwordChars[0]];
+index = -1;
 
 
 
@@ -31,26 +30,16 @@ const processMessage = (worker, message) =>{
 	if (message.op == "nextPassword")
 	{
 
-		for(var i = 0; i < currentPassword.length; i++)
+		if (index + 1 < passwordChars.length)
 		{
-			var index = passwordChars.indexOf(currentPassword[i]);
-			if (index + 1 < passwordChars.length)
-			{
-				currentPassword[i] = passwordChars[index + 1];
-				break;
-			}
-			else
-			{
-				currentPassword[i] = passwordChars[0];
-				if (i + 1 >= currentPassword.length)
-				{
-					currentPassword.push(passwordChars[0]);
-					break;
-				}
-			}
+			index = index + 1;
 		}
+		else
+		{
+			index = 0;
 
-		var currentPasswordStr = currentPassword.join('')
+		}
+		var currentPasswordStr = passwordChars[index];
 		worker.postMessage({
 			op:"nextPassword",
 			password: currentPasswordStr
